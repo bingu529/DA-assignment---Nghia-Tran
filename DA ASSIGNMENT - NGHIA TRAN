@@ -1,0 +1,303 @@
+using System;
+using System.Threading;
+
+public class Program
+{
+	public static void RockPaperScissor()
+	{
+		int Computer = 0;
+		int Player = 0;
+		bool game = true;
+		while (game)
+		{
+			Console.Clear();
+			Console.WriteLine("Welcome to Rock-Paper-Scissors, Please choose by entering one of the three numbers below: ");
+			Console.WriteLine("1. Paper");
+			Console.WriteLine("2. Scissor");
+			Console.WriteLine("3. Rock");
+			string playerchoice = Console.ReadLine();
+			// check if the player's choice is valid
+			if (playerchoice == "1" || playerchoice == "2" || playerchoice == "3")
+			{
+				Random computerchoice = new Random();
+				int Computerchoice = computerchoice.Next(1, 4);
+				switch (Computerchoice)
+				{
+					case 1:
+						if (playerchoice == "3")
+						{
+							Console.WriteLine("Player chose Rock");
+							Console.WriteLine("Computer chose Rock");
+							Console.WriteLine();
+							Console.WriteLine("DRAW");
+							Console.WriteLine();
+						}
+						else if (playerchoice == "2")
+						{
+							Console.WriteLine("Player chose Scissor");
+							Console.WriteLine("Computer chose Rock");
+							Console.WriteLine();
+							Console.WriteLine("COMPUTER WINS");
+							Console.WriteLine();
+							Computer++;
+						}
+						else if (playerchoice == "1")
+						{
+							Console.WriteLine("Player chose Paper");
+							Console.WriteLine("Computer chose Rock");
+							Console.WriteLine();
+							Console.WriteLine("PLAYER WINS");
+							Console.WriteLine();
+							Player++;
+						}
+
+						break;
+					case 2:
+						if (playerchoice == "3")
+						{
+							Console.WriteLine("Player chose Rock");
+							Console.WriteLine("Computer chose Scissor");
+							Console.WriteLine();
+							Console.WriteLine("PLAYER WINS");
+							Console.WriteLine();
+							Player++;
+						}
+						else if (playerchoice == "2")
+						{
+							Console.WriteLine("Player chose Scissor");
+							Console.WriteLine("Computer chose Scissor");
+							Console.WriteLine();
+							Console.WriteLine("DRAW");
+							Console.WriteLine();
+						}
+						else if (playerchoice == "1")
+						{
+							Console.WriteLine("Player chose Paper");
+							Console.WriteLine("Computer chose Scissor");
+							Console.WriteLine();
+							Console.WriteLine("COMPUTER WINS");
+							Console.WriteLine();
+							Computer++;
+						}
+
+						break;
+					case 3:
+						if (playerchoice == "3")
+						{
+							Console.WriteLine("Player chose Rock");
+							Console.WriteLine("Computer chose Paper");
+							Console.WriteLine();
+							Console.WriteLine("COMPUTER WINS");
+							Console.WriteLine();
+							Computer++;
+						}
+						else if (playerchoice == "2")
+						{
+							Console.WriteLine("Player chose Scissor");
+							Console.WriteLine("Computer chose Paper");
+							Console.WriteLine();
+							Console.WriteLine("PLAYER WINS");
+							Console.WriteLine();
+							Player++;
+						}
+						else if (playerchoice == "1")
+						{
+							Console.WriteLine("Player chose Paper");
+							Console.WriteLine("Computer chose Paper");
+							Console.WriteLine();
+							Console.WriteLine("DRAW");
+							Console.WriteLine();
+						}
+
+						break;
+				}
+// ask the players whether they want to play again or not
+				Console.WriteLine("Play Again? (Type Yes or No)");
+				string playagain = Console.ReadLine();
+				if (playagain == "Yes" || playagain == "yes")
+				{
+					game = true;//continue to play
+				}
+				else
+				{
+					game = false;
+					Console.Clear();
+					Main();//don't want to continue, return to menu
+				}
+
+				Console.WriteLine("Player has " + Player + " point, Computer has " + Computer + " point");// a summary of the player's points and cpu's points
+			}
+			else
+			{
+				Console.WriteLine("Invalid input, please enter 1, 2, or 3"); //validity of move checking
+			}
+		}
+	}
+
+	public static void NoughtsAndCrosses()
+	{
+		bool playAgain = true;
+		while (playAgain)
+		{
+			string[, ] letters = // noughts and crosses 3x3 grid
+			{
+				{
+					"_",
+					"_",
+					"_"
+				},
+				{
+					"_",
+					"_",
+					"_"
+				},
+				{
+					"_",
+					"_",
+					"_"
+				}
+			};
+			int moves = 0; // track the number of moves
+			while (true)
+			{
+				Console.Clear(); // clear the menu before displaying the board
+				DisplayBoard(letters); // display the current state of the board
+				Console.WriteLine("Enter row (0-2): ");
+				int num1;//number of row
+				bool validRow = int.TryParse(Console.ReadLine(), out num1);//receive the valid number of row and process it
+				Console.WriteLine("Enter column (0-2): ");
+				int num2;//number of column
+				bool validCol = int.TryParse(Console.ReadLine(), out num2);//receive the valid number of column and process it
+				if (validRow && validCol && IsValidMove(letters, num1, num2))
+				{
+					letters[num1, num2] = (moves % 2 == 0) ? "X" : "O"; //X and O take turns based on the number of moves
+					moves++;
+					// check for a win after each move
+					if (CheckWin(letters, "X"))
+					{
+						Console.Clear();
+						DisplayBoard(letters);
+						Console.WriteLine("Player X wins!");
+						break;
+					}
+					else if (CheckWin(letters, "O"))
+					{
+						Console.Clear();
+						DisplayBoard(letters);
+						Console.WriteLine("Player O wins!");
+						break;
+					}
+					// check for a draw if no one has won and all moves have been made
+					else if (Draw(moves))
+					{
+						Console.Clear();
+						DisplayBoard(letters);
+						Console.WriteLine("It's a draw!");
+						break;
+					}
+				}
+				else
+				{
+					Console.WriteLine("Invalid move. Try again.");
+					Console.WriteLine("Press any key to continue...");
+					Console.ReadLine(); //validity of move checking 
+				}
+			}
+// ask players if they want to play again
+			Console.WriteLine("Play Again? (Type Yes or No)");
+			string again = Console.ReadLine();
+			if (again == "Yes" || again == "yes")
+			{
+				playAgain = true; //continue to play
+			}
+			else
+			{
+				playAgain = false;
+				Console.Clear();
+				Main();//return to menu if don't want to play again
+			}
+		}
+	}
+		
+		// adds 'prettiness' to the board
+		static void DisplayBoard(string[, ] board)
+		{
+			Console.WriteLine("  0 1 2"); // column indices
+			for (int i = 0; i < 3; i++)
+			{
+				Console.Write(i + "|"); // row index
+				for (int j = 0; j < 3; j++)
+				{
+					Console.Write(board[i, j] + "|");
+				}
+
+				Console.WriteLine();
+			}
+		}
+
+		// Validity of move checking
+		static bool IsValidMove(string[, ] letters, int row, int col)
+		{
+			return row >= 0 && row < 3 && col >= 0 && col < 3 && letters[row, col] == "_";
+		}
+
+		// Method to check for a win
+		static bool CheckWin(string[, ] letters, string player)
+		{
+			//check for row wins
+			for (int i = 0; i < 3; i++)
+			{
+				if (letters[i, 0] == player && letters[i, 1] == player && letters[i, 2] == player)
+				{
+					return true;
+				}
+			}
+
+			//check for column wins
+			for (int j = 0; j < 3; j++)
+			{
+				if (letters[0, j] == player && letters[1, j] == player && letters[2, j] == player)
+				{
+					return true;
+				}
+			}
+
+			//check for diagonal wins
+			if ((letters[0, 0] == player && letters[1, 1] == player && letters[2, 2] == player) || (letters[0, 2] == player && letters[1, 1] == player && letters[2, 0] == player))
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		// check for a draw
+		static bool Draw(int moves)
+		{
+			// the game is tied if all 9 moves have been made
+			return moves == 9;
+		}
+
+		public static void Main()
+		{
+			Console.WriteLine("Welcome to 'Rock Paper Scissor' and 'Noughts and Crosses'!, Press A or B to choose a game, press X to exit");
+			Console.WriteLine("A. Rock Paper Scissor");
+			Console.WriteLine("B. Noughts and Crosses");
+			string answer = Console.ReadLine();
+			if (answer.ToUpper() == "A")
+			{
+				RockPaperScissor();
+			}
+			else if (answer.ToUpper() == "B")
+			{
+				NoughtsAndCrosses();
+			}
+			else
+			{
+				Thread.Sleep(2000);
+				Console.Clear();// exit, clear the console after 2 seconds
+			}
+
+			Console.WriteLine("Byeeeee");//appear after the console is cleared
+		}
+	}
